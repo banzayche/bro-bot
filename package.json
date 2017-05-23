@@ -13,7 +13,6 @@
     "htmlparser2": "^3.9.2",
     "node-random-number": "^0.1.1",
     "soupselect": "^0.2.0",
-    "telegram-node-bot": "^4.0.5",
-    "webworker-threads": "^0.7.11"
+    "telegram-node-bot": "^4.0.5"
   }
 }
