@@ -1,29 +1,23 @@
 'use strict';
 
-const Telegram = require('telegram-node-bot'),
-    PersistentMemoryStorage = require('./adapters/persistentMemoryStorage'),
-    storage = new PersistentMemoryStorage(
-        `${__dirname}/data/userStorage.json`,
-        `${__dirname}/data/chatStorage.json`
-    ),
-    tg = new Telegram.Telegram('387116379:AAExgkP9iVhXom0h_HZKr3TkBvpkJOMyMmk', {
-        workers: 1,
-        storage: storage
-    });
-const TodoController = require('./controllers/todo');
-const OtherwiseController = require('./controllers/otherwise');
+const TelegramBot = require('node-telegram-bot-api');
+const MessageColector = require('./controllers/MessageColector');
 
+// replace the value below with the Telegram token you receive from @BotFather
+const token = '---';
 
-tg.router.when(new Telegram.TextCommand('/add', 'addCommand'), new TodoController())
-    .when(new Telegram.TextCommand('/get', 'getCommand'), new TodoController())
-    .when(new Telegram.TextCommand('/check', 'checkCommand'), new TodoController())
-    .when(new Telegram.TextCommand('/дай отмазку', 'makeRquestCommand'), new TodoController())
-    .otherwise(new OtherwiseController());
+// Create a bot that uses 'polling' to fetch new updates
+const bot = new TelegramBot(token, {polling: true});
 
-function exitHandler(exitCode) {
-    storage.flush();
-    process.exit(exitCode);
-}
+// IF MESSAGE MATCHES "/echo [whatever]"
+bot.onText(/дай отмазку/, (msg, match) => new MessageColector(msg, match, bot));
 
-process.on('SIGINT', exitHandler.bind(null, 0));
-process.on('uncaughtException', exitHandler.bind(null, 1));
+// WORKS on every MESSAGE
+// Listen for any kind of message. There are different kinds of
+// messages.
+// bot.on('message', (msg) => {
+//   const chatId = msg.chat.id;
+
+//   // send a message to the chat acknowledging receipt of their message
+//   bot.sendMessage(chatId, 'Received your message');
+// });
