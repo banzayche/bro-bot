@@ -2,6 +2,7 @@
 
 const TelegramBot = require('node-telegram-bot-api');
 const MessageColector = require('./controllers/MessageColector');
+let _ = require('lodash');
 
 // replace the value below with the Telegram token you receive from @BotFather
 const token = '387116379:AAGHOhcMN4DH0RzEagC3hMmLj7msVfGGlHk';
@@ -11,9 +12,9 @@ const bot = new TelegramBot(token, {polling: true});
 
 bot.on('callback_query', function(msg) {
     var user = msg.from.id;
-    var data = msg.data;
-
-    new MessageColector(msg, [data], bot)
+    var match = /\/дай отмазку (.+)/.exec(msg.data);
+    
+    if (match) new MessageColector(_.set(msg, 'chat.id', match[1]), ['/дай отмазку'], bot)
 });
 // IF MESSAGE MATCHES "[whatever]"
 bot.onText(/(.+)/, (msg, match) => new MessageColector(msg, match, bot));

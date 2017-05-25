@@ -14,14 +14,14 @@ class MessageColector {
     // 'match' is the result of executing the regexp above on the text content
     // of the message
 
-    this.chatId = _.has(msg, 'chat.id') ? msg.chat.id : msg.from.id;
+    this.chatId = msg.chat.id;
     this.bot = bot;
     this.match = match;
 
     this.inlineKeyboard = {
       'reply_markup': {
         'inline_keyboard': [
-          [{text: 'Получить отмазку', callback_data: '/дай отмазку'}]
+          [{text: 'Получить отмазку', callback_data: `/дай отмазку ${this.chatId}`}]
         ]
       }
     };
