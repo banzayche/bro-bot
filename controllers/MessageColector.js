@@ -4,6 +4,9 @@ const unirest = require('unirest');
 let htmlparser = require("htmlparser2");
 let select = require('soupselect').select;
 const random = require('node-random-number');
+let _ = require('lodash');
+
+let excusePath = `/get-excuse/24`;
 
 class MessageColector {
   constructor(msg, match, bot) {
@@ -11,25 +14,26 @@ class MessageColector {
     // 'match' is the result of executing the regexp above on the text content
     // of the message
 
-    this.chatId = msg.chat.id;
+    this.chatId = _.has(msg, 'chat.id') ? msg.chat.id : msg.from.id;
     this.bot = bot;
     this.match = match;
 
-    // this.sendMessage();
-    this.makeRequest();
+    this.inlineKeyboard = {
+      'reply_markup': {
+        'inline_keyboard': [
+          [{text: 'Получить отмазку', callback_data: '/дай отмазку'}]
+        ]
+      }
+    };
+    
+    if (this.match[0] === '/дай отмазку') this.getExecuse()
+    else this.bot.sendSticker(this.chatId, 'CAADAgADEgUAAvoLtgjV7M7AFx5kYwI', this.inlineKeyboard);
   }
 
-  sendMessage() {
-    let resp = this.match[1]; // the captured "whatever"
-    // send back the matched "whatever" to the chat
-    this.bot.sendMessage(this.chatId, resp);
-  }
-
-  makeRequest() {
-    let number = random({start: 1, end: 50})[0];
+  getExecuse() {
     let that = this;
-
-    var Request = unirest.get(`http://copout.me/get-excuse/${number}`);
+    var Request = unirest.get(`http://copout.me${excusePath}`);
+    
     Request.query({
       _pjax: '#section-excuse'
     });
@@ -42,7 +46,10 @@ class MessageColector {
           var titles;
           try {
             titles = select(dom, 'blockquote')[0].children[0].data;
-            that.bot.sendMessage(that.chatId, titles);
+            // set up path to nex valid excuse
+            excusePath = select(dom, 'a.btn-generation.btn-open-excuse')[0].attribs['data-href'];
+
+            that.bot.sendMessage(that.chatId, titles, that.inlineKeyboard);
           } catch (error) {
             that.bot.sendMessage(that.chatId, 'Херня дело, попробуй позже..');
           }         
