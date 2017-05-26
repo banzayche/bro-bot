@@ -18,16 +18,27 @@ class MessageColector {
     this.bot = bot;
     this.match = match;
 
-    this.inlineKeyboard = {
-      'reply_markup': {
-        'inline_keyboard': [
-          [{text: 'Получить отмазку', callback_data: `/дай отмазку ${this.chatId}`}]
-        ]
-      }
+    this.inlineKeyboard = (key, all) => {
+      let keyboardArrayMap = {
+        get_excuse: [{text: 'Получить отмазку', callback_data: `/get_excuse ${this.chatId}`}],
+        get_joke: [{text: 'Получить шутку', callback_data: `/get_joke ${this.chatId}`}]
+      };
+
+      let markup = {
+        'reply_markup': {
+          'inline_keyboard': all ? [keyboardArrayMap[key[0]], keyboardArrayMap[key[1]]] : [keyboardArrayMap[key]]
+        }
+      };
+
+      return markup;
     };
     
-    if (this.match[0] === '/дай отмазку') this.getExecuse()
-    else this.bot.sendSticker(this.chatId, 'CAADAgADEgUAAvoLtgjV7M7AFx5kYwI', this.inlineKeyboard);
+    if (this.match[0] === '/get_excuse') this.getExecuse()
+    else if (this.match[0] === '/get_joke') this.getJoke()
+    else {
+      this.bot.sendSticker(this.chatId, 'CAADAgADEgUAAvoLtgjV7M7AFx5kYwI');
+      this.bot.sendMessage(this.chatId, 'Что я могу вам предоставить:', this.inlineKeyboard(['get_excuse', 'get_joke'], true));
+    }
   }
 
   getExecuse() {
@@ -49,13 +60,29 @@ class MessageColector {
             // set up path to nex valid excuse
             excusePath = select(dom, 'a.btn-generation.btn-open-excuse')[0].attribs['data-href'];
 
-            that.bot.sendMessage(that.chatId, titles, that.inlineKeyboard);
+            that.bot.sendMessage(that.chatId, titles, that.inlineKeyboard('get_excuse'));
           } catch (error) {
             that.bot.sendMessage(that.chatId, 'Херня дело, попробуй позже..');
           }         
         }                
       });
       new htmlparser.Parser(handler).parseComplete(response.body)
+    });
+  }
+
+  getJoke() {
+    let that = this;
+    var Request = unirest.post(`https://online-generators.ru/ajax.php`);
+
+    Request.send({
+      processor: 'jokes'
+    });
+    Request.end(function (response) {
+      try {
+        that.bot.sendMessage(that.chatId, response.body.split('##')[0], that.inlineKeyboard('get_joke'));
+      } catch (error) {
+        that.bot.sendMessage(that.chatId, 'Херня дело, попробуй позже..');
+      }     
     });
   }
 }

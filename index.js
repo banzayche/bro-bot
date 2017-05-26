@@ -12,14 +12,13 @@ const bot = new TelegramBot(token, {polling: true});
 
 bot.on('callback_query', function(msg) {
     var user = msg.from.id;
-    var match = /\/дай отмазку (.+)/.exec(msg.data);
-    
-    if (match) new MessageColector(_.set(msg, 'chat.id', match[1]), ['/дай отмазку'], bot)
+    var match = /\/get_excuse (.+)/.exec(msg.data) || /\/get_joke (.+)/.exec(msg.data);
+
+    if (match) new MessageColector(_.set(msg, 'chat.id', match[1]), [msg.data.split(' ')[0]], bot)
 });
 // IF MESSAGE MATCHES "[whatever]"
 bot.onText(/(.+)/, (msg, match) => new MessageColector(msg, match, bot));
 
-// WORKS on every MESSAGE
 // Listen for any kind of message. There are different kinds of
 // messages.
 // bot.on('message', (msg) => {
