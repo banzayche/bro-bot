@@ -11,10 +11,12 @@ const token = '387116379:AAGHOhcMN4DH0RzEagC3hMmLj7msVfGGlHk';
 const bot = new TelegramBot(token, {polling: true});
 
 bot.on('callback_query', function(msg) {
-    var user = msg.from.id;
     var match = /\/get_excuse (.+)/.exec(msg.data) || /\/get_joke (.+)/.exec(msg.data);
 
-    if (match) new MessageColector(_.set(msg, 'chat.id', match[1]), [msg.data.split(' ')[0]], bot)
+    // To define chat.id
+    // _.set(msg, 'chat.id', match[1])
+
+    if (match) new MessageColector(msg, [msg.data.split(' ')[0]], bot)
 });
 // IF MESSAGE MATCHES "[whatever]"
 bot.onText(/(.+)/, (msg, match) => new MessageColector(msg, match, bot));

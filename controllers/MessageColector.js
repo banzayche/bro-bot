@@ -6,7 +6,7 @@ let select = require('soupselect').select;
 const random = require('node-random-number');
 let _ = require('lodash');
 
-let excusePath = `/get-excuse/24`;
+let excusePath = `/get-excuse/367`;
 
 class MessageColector {
   constructor(msg, match, bot) {
@@ -14,7 +14,7 @@ class MessageColector {
     // 'match' is the result of executing the regexp above on the text content
     // of the message
 
-    this.chatId = msg.chat.id;
+    this.chatId = _.has(msg, 'chat.id') ? msg.chat.id : msg.from.id;
     this.bot = bot;
     this.match = match;
 
