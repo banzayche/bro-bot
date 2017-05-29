@@ -18,12 +18,3 @@ bot.on('callback_query', function(msg) {
 });
 // IF MESSAGE MATCHES "[whatever]"
 bot.onText(/(.+)/, (msg, match) => new MessageColector(msg, match, bot));
-
-// Listen for any kind of message. There are different kinds of
-// messages.
-// bot.on('message', (msg) => {
-//   const chatId = msg.chat.id;
-
-//   // send a message to the chat acknowledging receipt of their message
-//   bot.sendMessage(chatId, 'Received your message');
-// });
