@@ -2,9 +2,9 @@
   "name": "bro-bot",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "start.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node start.js"
   },
   "keywords": [],
   "author": "",
@@ -12,6 +12,7 @@
   "dependencies": {
     "htmlparser2": "^3.9.2",
     "lodash": "^4.17.4",
+    "moment": "^2.18.1",
     "node-random-number": "^0.1.1",
     "node-telegram-bot-api": "^0.27.1",
     "soupselect": "^0.2.0",

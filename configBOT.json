@@ -1,0 +1,12 @@
+{
+    "telegrammBotToken": "string",
+    "GPULowTemperature": "integer",
+    "GPUTLimit": "integer",
+    "GPUCount": "integer",
+    "myChatId": "string",
+    "rigAdress": "string",
+    "ethermineIDS": {
+      "sem": "string",
+      "serg": "string"
+    }
+}
